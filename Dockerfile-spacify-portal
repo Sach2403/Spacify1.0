@@ -1,0 +1,9 @@
+FROM maven:3.8-openjdk-18-slim AS MAVEN_BUILD
+COPY ./ ./
+RUN mvn clean package -P spacify-portal
+RUN ls
+
+FROM openjdk:18-jdk-alpine3.15
+COPY --from=MAVEN_BUILD /spacify-portal/target/spacify-portal-1.0-SNAPSHOT-jar-with-dependencies.jar spacify-portal.jar
+
+ENTRYPOINT ["java", "-Dserver.port=8083", "-jar", "spacify-portal.jar"]
